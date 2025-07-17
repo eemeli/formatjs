@@ -17,6 +17,7 @@ export function PartitionNumberPattern(
   _x: Decimal
 ): NumberFormatPart[] {
   let x = _x
+  let stringDigits = (x as any).__StringDigits ?? 0
   // IMPL: We need to record the magnitude of the number
   let magnitude = 0
 
@@ -63,6 +64,7 @@ export function PartitionNumberPattern(
       // 8.d. Let x be x × 10^(-exponent).
       x = x.times(getPowerOf10(-exponent))
     }
+    Object.assign(x, {__StringDigits: stringDigits})
 
     // 8.e. Let formatNumberResult be FormatNumericToString(internalSlots, x).
     const formatNumberResult = FormatNumericToString(internalSlots, x)

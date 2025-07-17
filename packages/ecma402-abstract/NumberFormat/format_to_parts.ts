@@ -509,6 +509,7 @@ function partitionNumberIntoParts(
       new Decimal(exponent),
       0,
       0,
+      0,
       roundingIncrement,
       unsignedRoundingMode
     )

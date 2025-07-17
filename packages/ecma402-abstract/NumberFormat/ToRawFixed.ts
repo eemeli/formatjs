@@ -42,11 +42,13 @@ function findN2R2(x: Decimal, f: number, roundingIncrement: number) {
 /**
  * https://tc39.es/ecma402/#sec-torawfixed
  * @param x a finite non-negative Number or BigInt
+ * @param stringDigits a non-negative integer
  * @param minFraction an integer between 0 and 20
  * @param maxFraction an integer between 0 and 20
  */
 export function ToRawFixed(
   x: Decimal,
+  stringDigits: number,
   minFraction: number,
   maxFraction: number,
   roundingIncrement: number,
@@ -109,34 +111,31 @@ export function ToRawFixed(
     // c. Let a be the substring of m from 0 to k - f.
     const a = m.slice(0, k - f)
     // d. Let b be the substring of m from k - f to k.
-    const b = m.slice(m.length - f)
-    // e. Set m to the string-concatenation of a, ".", and b.
-    m = a + '.' + b
-    // f. Let int be the length of a.
+    let b = m.slice(m.length - f)
+    // e. Let int be the length of a.
     int = a.length
+    // f. Let cut be maxFraction - max(stringDigits - int, minFraction).
+    let cut = maxFraction - Math.max(stringDigits - int, minFraction)
+    // g. Repeat, while cut > 0 and the last code unit of b is 0x0030 (DIGIT ZERO),
+    while (cut > 0 && b[b.length - 1] === '0') {
+      // i. Remove the last code unit from b.
+      b = b.slice(0, b.length - 1)
+      // ii. Set cut to cut - 1.
+      cut--
+    }
+    // h. If b is the empty String, set m to a.
+    if (b === '') {
+      m = a
+    } else {
+      // i. Else, set m to the string-concatenation of a, ".", and b.
+      m = a + '.' + b
+    }
   } else {
     // 10. Else, let int be the length of m.
     int = m.length
   }
 
-  // 11. Let cut be maxFraction - minFraction.
-  let cut = maxFraction - minFraction
-
-  // 12. Repeat, while cut > 0 and the last character of m is "0",
-  while (cut > 0 && m[m.length - 1] === '0') {
-    // a. Remove the last character from m.
-    m = m.slice(0, m.length - 1)
-    // b. Decrease cut by 1.
-    cut--
-  }
-
-  // 13. If the last character of m is ".", then
-  if (m[m.length - 1] === '\u002e') {
-    // a. Remove the last character from m.
-    m = m.slice(0, m.length - 1)
-  }
-
-  // 14. Return the Record { [[FormattedString]]: m, [[RoundedNumber]]: xFinal, [[IntegerDigitsCount]]: int, [[RoundingMagnitude]]: -f }.
+  // 12. Return the Record { [[FormattedString]]: m, [[RoundedNumber]]: xFinal, [[IntegerDigitsCount]]: int, [[RoundingMagnitude]]: -f }.
   return {
     formattedString: m,
     roundedNumber: xFinal,

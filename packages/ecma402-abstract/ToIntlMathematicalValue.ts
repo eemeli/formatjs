@@ -30,7 +30,15 @@ export function ToIntlMathematicalValue(input: unknown): Decimal {
 
   // Try to convert to Decimal (handles numbers and strings)
   try {
-    return new Decimal(primValue as any)
+    const d = new Decimal(primValue as any)
+    if (typeof primValue === 'string') {
+      const digits = primValue
+        .replace(/[eE].*/, '')
+        .replace(/[^0-9.]/g, '')
+        .replace(/(^0)?\./, '')
+      Object.assign(d, {__StringDigits: digits.length})
+    }
+    return d
   } catch {
     return new Decimal(NaN)
   }

@@ -31,6 +31,7 @@ export function FormatNumericToString(
   formattedString: string
 } {
   let x = _x
+  let stringDigits = (x as any).__StringDigits ?? 0
   let sign
   // -0
   if (x.isZero() && x.isNegative()) {
@@ -63,6 +64,7 @@ export function FormatNumericToString(
     case 'significantDigits':
       result = ToRawPrecision(
         x,
+        stringDigits,
         intlObject.minimumSignificantDigits,
         intlObject.maximumSignificantDigits,
         unsignedRoundingMode
@@ -71,6 +73,7 @@ export function FormatNumericToString(
     case 'fractionDigits':
       result = ToRawFixed(
         x,
+        stringDigits,
         intlObject.minimumFractionDigits,
         intlObject.maximumFractionDigits,
         intlObject.roundingIncrement,
@@ -80,12 +83,14 @@ export function FormatNumericToString(
     default:
       let sResult = ToRawPrecision(
         x,
+        stringDigits,
         intlObject.minimumSignificantDigits,
         intlObject.maximumSignificantDigits,
         unsignedRoundingMode
       )
       let fResult = ToRawFixed(
         x,
+        stringDigits,
         intlObject.minimumFractionDigits,
         intlObject.maximumFractionDigits,
         intlObject.roundingIncrement,
