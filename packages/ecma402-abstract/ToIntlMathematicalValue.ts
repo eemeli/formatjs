@@ -32,11 +32,38 @@ export function ToIntlMathematicalValue(input: unknown): Decimal {
   try {
     const d = new Decimal(primValue as any)
     if (typeof primValue === 'string') {
-      const digits = primValue
-        .replace(/[eE].*/, '')
-        .replace(/[^0-9.]/g, '')
-        .replace(/(^0)?\./, '')
-      Object.assign(d, {__StringDigits: digits.length})
+      let digits = 0
+      const numericLiteral = primValue.trim()
+      const unsignedDecimalLiteral = numericLiteral.startsWith('-')
+        ? numericLiteral.substring(1)
+        : numericLiteral
+
+      const decDotDecExp = unsignedDecimalLiteral.match(
+        /^0*([0-9]+)\.([0-9]*)([eE][+-]?[0-9]+)?$/
+      )
+      if (decDotDecExp) {
+        const m = decDotDecExp[1].length
+        const n = decDotDecExp[2].length
+        digits = m + n
+      }
+
+      const dotDecExp = unsignedDecimalLiteral.match(
+        /^0*\.([0-9]+)([eE][+-]?[0-9]+)?$/
+      )
+      if (dotDecExp) {
+        let n = dotDecExp[1].length
+        digits = n + 1
+      }
+
+      const decExp = unsignedDecimalLiteral.match(
+        /^0*([0-9]+)([eE][+-]?[0-9]+)?$/
+      )
+      if (decExp) {
+        const m = decExp[1].length
+        digits = m
+      }
+
+      Object.assign(d, {__StringDigits: digits})
     }
     return d
   } catch {
