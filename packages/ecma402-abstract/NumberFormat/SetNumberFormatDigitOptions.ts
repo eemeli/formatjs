@@ -90,7 +90,7 @@ Valid values are ${Array.from(VALID_ROUNDING_INCREMENTS).join(', ')}.`
     opts,
     'trailingZeroDisplay',
     'string',
-    ['auto', 'stripIfInteger'],
+    ['auto', 'stripIfInteger', 'stripToMinimum'],
     'auto'
   )
 

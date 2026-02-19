@@ -212,7 +212,7 @@ export type NumberFormatOptionsSignDisplay =
   | 'exceptZero'
   | 'negative'
 export type NumberFormatOptionsUnitDisplay = 'long' | 'short' | 'narrow'
-export type TrailingZeroDisplay = 'auto' | 'stripIfInteger'
+export type TrailingZeroDisplay = 'auto' | 'stripIfInteger' | 'stripToMinimum'
 
 export interface NumberFormatInternal extends NumberFormatDigitInternalSlots {
   locale: string

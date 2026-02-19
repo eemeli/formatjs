@@ -70,6 +70,21 @@ describe('keep-trailing-zeros', function () {
   assert.sameValue(nf3.format('1.000000'), '1.000')
   assert.sameValue(nf3.format('1.99999'), '2.000')
 
+  const nf4 = new NumberFormat('en-US', {
+    minimumSignificantDigits: 2,
+    maximumSignificantDigits: 4,
+    // @ts-ignore -- Not yet supported by TS Intl types
+    trailingZeroDisplay: 'stripToMinimum',
+  })
+
+  assert.sameValue(nf4.format('1'), '1.0')
+  assert.sameValue(nf4.format('1.0'), '1.0')
+  assert.sameValue(nf4.format('1.00'), '1.0')
+  assert.sameValue(nf4.format('0.00'), '0.0')
+  assert.sameValue(nf4.format('.00'), '0.0')
+  assert.sameValue(nf4.format('1.000000'), '1.0')
+  assert.sameValue(nf4.format('1.99999'), '2.0')
+
   const pf = new NumberFormat('en-US', {
     style: 'percent',
     maximumFractionDigits: 10,

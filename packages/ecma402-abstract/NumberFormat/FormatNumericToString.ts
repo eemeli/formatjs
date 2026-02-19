@@ -52,6 +52,8 @@ export function FormatNumericToString(
     }
   }
 
+  if (intlObject.trailingZeroDisplay === 'stripToMinimum') stringDigits = 0
+
   let result: RawNumberFormatResult
 
   const roundingType = intlObject.roundingType
