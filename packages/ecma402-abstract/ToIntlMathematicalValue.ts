@@ -64,7 +64,7 @@ export function ToIntlMathematicalValue(input: unknown): Decimal {
         if (m + e < 1) m = 1 - e
       }
 
-      Object.assign(d, {__StringDigits: m + n + f})
+      Object.assign(d, {__StringDigitCount: m + n + f})
     }
     return d
   } catch {
