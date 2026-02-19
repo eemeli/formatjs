@@ -32,38 +32,39 @@ export function ToIntlMathematicalValue(input: unknown): Decimal {
   try {
     const d = new Decimal(primValue as any)
     if (typeof primValue === 'string') {
-      let digits = 0
+      let m = 0
+      let n = 0
       const numericLiteral = primValue.trim()
       const unsignedDecimalLiteral = numericLiteral.startsWith('-')
         ? numericLiteral.substring(1)
         : numericLiteral
 
-      const decDotDecExp = unsignedDecimalLiteral.match(
-        /^0*([0-9]+)\.([0-9]*)([eE][+-]?[0-9]+)?$/
-      )
-      if (decDotDecExp) {
-        const m = decDotDecExp[1].length
-        const n = decDotDecExp[2].length
-        digits = m + n
+      const decDotDec = unsignedDecimalLiteral.match(/^0*([0-9]+)\.([0-9]*)/)
+      if (decDotDec) {
+        m = decDotDec[1].length
+        n = decDotDec[2].length
+      } else {
+        const dotDec = unsignedDecimalLiteral.match(/^0*\.([0-9]+)/)
+        if (dotDec) {
+          m = 1
+          n = dotDec[1].length
+        } else {
+          const dec = unsignedDecimalLiteral.match(/^0*([0-9]+)/)
+          if (dec) {
+            m = dec[1].length
+            n = 0
+          }
+        }
       }
 
-      const dotDecExp = unsignedDecimalLiteral.match(
-        /^0*\.([0-9]+)([eE][+-]?[0-9]+)?$/
-      )
-      if (dotDecExp) {
-        let n = dotDecExp[1].length
-        digits = n + 1
+      let f = 0
+      const exp = unsignedDecimalLiteral.match(/[eE]([+-]?[0-9]+)$/)
+      if (exp) {
+        const e = Number(exp[1])
+        if (m + e < 1) m = 1 - e
       }
 
-      const decExp = unsignedDecimalLiteral.match(
-        /^0*([0-9]+)([eE][+-]?[0-9]+)?$/
-      )
-      if (decExp) {
-        const m = decExp[1].length
-        digits = m
-      }
-
-      Object.assign(d, {__StringDigits: digits})
+      Object.assign(d, {__StringDigits: m + n + f})
     }
     return d
   } catch {
