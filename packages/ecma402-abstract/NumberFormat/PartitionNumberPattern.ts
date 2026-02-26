@@ -17,7 +17,6 @@ export function PartitionNumberPattern(
   _x: Decimal
 ): NumberFormatPart[] {
   let x = _x
-  let stringDigitCount = (x as any).__StringDigitCount ?? 0
   // IMPL: We need to record the magnitude of the number
   let magnitude = 0
 
@@ -49,13 +48,9 @@ export function PartitionNumberPattern(
       // 8.a. If x < 0, let x be -x.
       invariant(x.isFinite(), 'Input must be a mathematical value')
 
-      let magnitude_ = Number(x.abs().log(10).floor())
-
       // 8.b. If internalSlots.[[style]] is "percent", let x be 100 × x.
       if (internalSlots.style == 'percent') {
         x = x.times(100)
-        if (magnitude_ < 0) stringDigitCount += Math.max(magnitude_, -2)
-        magnitude_ += 2
       }
 
       // 8.c. Let exponent be ComputeExponent(numberFormat, x).
@@ -67,11 +62,8 @@ export function PartitionNumberPattern(
 
       // 8.d. Let x be x × 10^(-exponent).
       x = x.times(getPowerOf10(-exponent))
-      if (magnitude_ < 0 && exponent < 0) {
-        stringDigitCount += Math.max(magnitude_, exponent)
-      }
     }
-    Object.assign(x, {__StringDigitCount: stringDigitCount})
+    Object.assign(x, {__StringDigitCount: (_x as any).__StringDigitCount})
 
     // 8.e. Let formatNumberResult be FormatNumericToString(internalSlots, x).
     const formatNumberResult = FormatNumericToString(internalSlots, x)

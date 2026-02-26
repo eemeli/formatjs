@@ -114,8 +114,13 @@ export function ToRawFixed(
     let b = m.slice(m.length - f)
     // e. Let int be the length of a.
     int = a.length
+
+    let sfc = stringDigitCount - int
+    const zm = (a + b).match(/^0+/)
+    if (zm && !n.isZero()) sfc += zm[0].length
+
     // f. Let cut be maxFraction - max(stringDigitCount - int, minFraction).
-    let cut = maxFraction - Math.max(stringDigitCount - int, minFraction)
+    let cut = maxFraction - Math.max(sfc, minFraction)
     // g. Repeat, while cut > 0 and the last code unit of b is 0x0030 (DIGIT ZERO),
     while (cut > 0 && b[b.length - 1] === '0') {
       // i. Remove the last code unit from b.

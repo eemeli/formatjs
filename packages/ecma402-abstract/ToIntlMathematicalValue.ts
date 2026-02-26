@@ -32,39 +32,20 @@ export function ToIntlMathematicalValue(input: unknown): Decimal {
   try {
     const d = new Decimal(primValue as any)
     if (typeof primValue === 'string') {
-      let m = 0
-      let n = 0
       const numericLiteral = primValue.trim()
       const unsignedDecimalLiteral = numericLiteral.startsWith('-')
         ? numericLiteral.substring(1)
         : numericLiteral
 
-      const decDotDec = unsignedDecimalLiteral.match(/^0*([0-9]+)\.([0-9]*)/)
-      if (decDotDec) {
-        m = decDotDec[1].length
-        n = decDotDec[2].length
-      } else {
-        const dotDec = unsignedDecimalLiteral.match(/^0*\.([0-9]+)/)
-        if (dotDec) {
-          m = 1
-          n = dotDec[1].length
-        } else {
-          const dec = unsignedDecimalLiteral.match(/^0*([0-9]+)/)
-          if (dec) {
-            m = dec[1].length
-            n = 0
-          }
-        }
+      let stringDigitCount = 0
+      const match = unsignedDecimalLiteral.match(/^([0-9]*)(?:\.([0-9]*))?/)!
+      if (match) {
+        const fd = match[2] ?? ''
+        stringDigitCount =
+          (match[1] + fd).replace(/^0+/, '').length || 1 + fd.length
       }
 
-      let f = 0
-      const exp = unsignedDecimalLiteral.match(/[eE]([+-]?[0-9]+)$/)
-      if (exp) {
-        const e = Number(exp[1])
-        if (m + e < 1) m = 1 - e
-      }
-
-      Object.assign(d, {__StringDigitCount: m + n + f})
+      Object.assign(d, {__StringDigitCount: stringDigitCount})
     }
     return d
   } catch {
