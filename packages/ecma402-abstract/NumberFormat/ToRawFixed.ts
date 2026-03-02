@@ -97,11 +97,13 @@ export function ToRawFixed(
   if (f !== 0) {
     // a. Let k be the length of m.
     let k = m.length
+    let zn = 0
 
     // b. If k < f, then
     if (k <= f) {
+      zn = f - k + 1
       // i. Let z be the String value consisting of f + 1 - k occurrences of the character "0".
-      const z = repeat('0', f - k + 1)
+      const z = repeat('0', zn)
       // ii. Set m to the string-concatenation of z and m.
       m = z + m
       // iii. Set k to f + 1.
@@ -116,8 +118,7 @@ export function ToRawFixed(
     int = a.length
 
     let sfc = stringDigitCount - int
-    const zm = (a + b).match(/^0+/)
-    if (zm && !n.isZero()) sfc += zm[0].length
+    if (!n.isZero()) sfc += zn
 
     // f. Let cut be maxFraction - max(stringDigitCount - int, minFraction).
     let cut = maxFraction - Math.max(sfc, minFraction)

@@ -209,16 +209,12 @@ export function ToRawPrecision(
     int = 1
   }
 
-  // 7. If m contains ".", and maxPrecision > minPrecision, then
-  if (m.includes('.') && maxPrecision > minPrecision) {
-    let z = 0
-    const zm = m.match(/^0(\.0+)?/)
-    if (zm && !x.isZero()) {
-      z = zm[1]?.length ?? 1
-    }
+  let resolvedMinPrecision = Math.max(minPrecision, stringDigitCount)
 
+  // 7. If m contains ".", and maxPrecision > minPrecision, then
+  if (m.includes('.') && maxPrecision > resolvedMinPrecision) {
     // a. Let cut be maxPrecision - minPrecision.
-    let cut = maxPrecision - Math.max(z + stringDigitCount, minPrecision)
+    let cut = maxPrecision - resolvedMinPrecision
     // b. Repeat, while cut > 0 and the last character of m is "0",
     while (cut > 0 && m[m.length - 1] === '0') {
       // i. Remove the last character from m.
